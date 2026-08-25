@@ -89,4 +89,5 @@ export const leetcode = {
 };
 
 // CHANGE HERE: Add Formspree/Web3Forms endpoint if a hosted contact form is required.
-export const contactFormEndpoint = "6ae131dd-3350-4ecb-ab25-f6c85fdc8aa3";
+export const contactFormEndpoint = "ce89aa8a-def9-41c0-9ebc-673d2db0c26d";
+export const web3FormsAccessKey = "ce89aa8a-def9-41c0-9ebc-673d2db0c26d";
