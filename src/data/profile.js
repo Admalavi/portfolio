@@ -26,7 +26,7 @@ export const profile = {
   // CHANGE HERE: Replace public/profile-photo.jpg with your actual profile photo.
   photo: "1000538702.jpg",
 
-  
+  // CHANGE HERE: Add your latest resume as public/resume.pdf.
   resume: "Resume (3).pdf",
 };
 
@@ -88,6 +88,8 @@ export const leetcode = {
   url: "https://leetcode.com/akshata_malavi",
 };
 
-// CHANGE HERE: Add Formspree/Web3Forms endpoint if a hosted contact form is required.
-export const contactFormEndpoint = "ce89aa8a-def9-41c0-9ebc-673d2db0c26d";
+// CHANGE HERE: Get a free access key at https://web3forms.com (no signup
+// needed, just verify your email) and paste it here. Once set, messages
+// submitted through the Contact form are emailed directly to you —
+// visitors no longer need their own email app to open.
 export const web3FormsAccessKey = "ce89aa8a-def9-41c0-9ebc-673d2db0c26d";
