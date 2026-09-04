@@ -3,11 +3,13 @@ import { FaGithub, FaLinkedin, FaCode } from "react-icons/fa";
 import { HiOutlineMail, HiOutlineLocationMarker, HiOutlinePaperAirplane } from "react-icons/hi";
 import SectionHeading from "./SectionHeading.jsx";
 import Reveal from "./Reveal.jsx";
-import { profile, socials, contactFormEndpoint } from "../data/profile.js";
+import { profile, socials, web3FormsAccessKey } from "../data/profile.js";
+
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState("idle"); // idle | sending | sent
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
 
   const handleChange = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -16,24 +18,38 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // CHANGE HERE: Add Formspree/Web3Forms endpoint if a hosted contact form is required.
-    if (contactFormEndpoint) {
+    // Once you add a Web3Forms access key in src/data/profile.js, submissions
+    // are emailed directly to you — no mail app or backend required.
+    if (web3FormsAccessKey) {
       setStatus("sending");
       try {
-        await fetch(contactFormEndpoint, {
+        const res = await fetch(WEB3FORMS_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(form),
+          body: JSON.stringify({
+            access_key: web3FormsAccessKey,
+            subject: `Portfolio message from ${form.name}`,
+            from_name: form.name,
+            name: form.name,
+            email: form.email,
+            message: form.message,
+          }),
         });
-        setStatus("sent");
-        setForm({ name: "", email: "", message: "" });
+        const data = await res.json();
+        if (data.success) {
+          setStatus("sent");
+          setForm({ name: "", email: "", message: "" });
+        } else {
+          throw new Error(data.message || "Submission failed");
+        }
       } catch {
-        setStatus("idle");
-        fallbackToMailto();
+        setStatus("error");
       }
       return;
     }
 
+    // CHANGE HERE: Add a Web3Forms access key above for direct email delivery.
+    // Until then, this falls back to opening the visitor's own email app.
     fallbackToMailto();
   };
 
@@ -157,7 +173,15 @@ export default function Contact() {
 
               {status === "sent" && (
                 <p role="status" className="text-sm text-accent-light">
-                  Thanks! Your message client should now be open, or your message was sent.
+                  {web3FormsAccessKey
+                    ? "Thanks! Your message has been sent."
+                    : "Thanks! Your email app should now be open — just hit send there."}
+                </p>
+              )}
+              {status === "error" && (
+                <p role="status" className="text-sm text-red-400">
+                  Something went wrong sending your message. Please try again, or email me directly at{" "}
+                  <a href={socials.email} className="underline">{profile.email}</a>.
                 </p>
               )}
             </form>
